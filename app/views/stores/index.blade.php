@@ -6,7 +6,7 @@
 		<table class="table table-striped">
 	  		<thead>
 	  			<tr>
-		  			<th>Sl.</th>
+		  			<th>Id#</th>
 		  			<th>Store URL</th>
 		  			<th></th>
 	  			</tr>

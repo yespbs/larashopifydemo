@@ -152,6 +152,7 @@ class StoreController extends \BaseController {
 		//echo 'store:' .$id;
 
 		$data = array();
+
 		try{
 			$data['store'] = $store = \LaraShopifyDemo\Model\Store::findOrFail($id);
 
@@ -160,12 +161,18 @@ class StoreController extends \BaseController {
 			$endpoint_url = "https://larashopifydemo.myshopify.com/admin/webhooks.json";
 
 			$response = $client->get($endpoint_url, [			
-			'headers' => ['X-Shopify-Access-Token' => $store->access_token]
+				'headers' => ['X-Shopify-Access-Token' => $store->access_token]
 			]);
 
 			$json = $response->json();
 
-			pr($json);
+			//pr($json);die;
+
+			$data['webhooks'] = $json['webhooks'];
+
+			//pr($data);
+			//die;
+			$data['format_options'] = ['json'=>'JSON','xml'=>'XML'];
 		}catch (Exception $e){
 			\Log::error($e->getMessage());
 
@@ -176,6 +183,50 @@ class StoreController extends \BaseController {
 		}
 
 		return View::make('stores.webhooks', $data);
+	}
+
+	public function postWebhookCreate()
+	{
+		// create new product
+		if ( Input::has('act') && 'create_webhook' == Input::get('act')) {
+			// post
+			$post = Input::get();
+
+			$store_id = $post['store_id'];
+
+			// init
+			$errors	= array('status'=>'error', 'message'=>"Couldn't create webhook!");
+
+			try{
+				$store = \LaraShopifyDemo\Model\Store::findOrFail($store_id);
+				
+				$client = new Client();
+		
+				$endpoint_url = "https://".$store->store."/admin/webhooks.json";
+
+				$post = ['webhook'=>['topic'=>$post['topic'],'address'=>$post['address'],'format'=>$post['format']]];
+
+				$response = $client->post($endpoint_url, [
+					'json' => $post,
+					'headers' => ['X-Shopify-Access-Token' => $store->access_token]
+				]);
+
+				$json = $response->json();
+
+				\Log::debug( pr($json, true) );
+
+				// init
+				$errors	= array('status'=>'success', 'message'=>"Webhook created successfully!");
+
+				// redirect with flash				
+				return Redirect::to( sprintf('stores/%d/webhooks', $store->id) )->with( 'errors', $errors );	
+			}catch( Excepriotn $e ){
+				$errors['message'] .= ' ' . $e->getMessage();
+			}	
+
+			// redirect with flash				
+			return Redirect::to( 'stores' )->with( 'errors', $errors );	
+		}	
 	}
 
 	/**
