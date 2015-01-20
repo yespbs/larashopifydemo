@@ -17,4 +17,4 @@ Route::get('/', function()
 });
 
 Route::controller('stores'     , 'StoreController');
-//Route::controller('webhooks'   , 'WebhookController');
+Route::controller('webhooks'   , 'WebhookController');

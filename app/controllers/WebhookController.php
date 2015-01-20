@@ -8,9 +8,10 @@ class WebhookController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function getIndex()
 	{
 		//
+		echo 'test';
 	}
 
 	/**

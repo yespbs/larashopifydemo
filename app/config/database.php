@@ -55,12 +55,15 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'forge',
-			'username'  => 'forge',
-			'password'  => '',
+			'database'  => 'larashopifydemo',
+			'username'  => 'root',
+			'password'  => 'sologic',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
+			'options'   => array(
+				\PDO::MYSQL_ATTR_INIT_COMMAND => "SET time_zone = '+00:00'"
+			)
 		),
 
 		'pgsql' => array(

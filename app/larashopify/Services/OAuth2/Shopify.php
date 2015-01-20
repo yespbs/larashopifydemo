@@ -32,15 +32,21 @@ class Shopify extends AbstractProvider
 
 	public function urlUserDetails(\League\OAuth2\Client\Token\AccessToken $token)
 	{
-		return \URL::to('oauth/user'); // @TODO: extract this somehow
+		return \URL::to('stores/user-details'); // @TODO: extract this somehow
 	}
 
+	/**
+	 * @todo
+	 */ 
 	public function userDetails($response, \League\OAuth2\Client\Token\AccessToken $token)
 	{
 		try {
 			return json_decode($response);
-		} catch (\Exception $ex) {
-			App::make('LifecycleMail\Repositories\UserRepository')->findByStoreOAuthToken($token['access_token']);
+		} catch (\Exception $e) {
+			//App::make('LifecycleMail\Repositories\UserRepository')->findByStoreOAuthToken($token['access_token']);
+			\Log::error( $e->getMessage(), array('context'=>'Shopify_userDetails') );
 		}
+
+		return false;
 	}
 } 
