@@ -1,1 +1,5 @@
-php artisan generate:migration create_stores_table --fields="access_token:string(50), refresh_token:string(50), publishable_key:string(50), token_type:string(50), email:string(100), password:string(60), remember_token:string(100)"
+[migration]
+php artisan generate:migration create_stores_table --fields="store:string(255), access_token:string(50), refresh_token:string(50), publishable_key:string(50), token_type:string(50), email:string(100), password:string(60), remember_token:string(100)"
+
+[model]
+php artisan generate:model Store --path=app/larashopifydemo/Model

@@ -22,7 +22,7 @@
             "app/helpers.php"
         ],
         "psr-4": {
-			"LaraShopify\\": "app/larashopify"
+			"LaraShopifyDemo\\": "app/larashopifydemo"
 		}
 	},
 	"scripts": {

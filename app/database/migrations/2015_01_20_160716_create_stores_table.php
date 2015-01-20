@@ -15,6 +15,7 @@ class CreateStoresTable extends Migration {
 		Schema::create('stores', function(Blueprint $table)
 		{
 			$table->increments('id');
+			$table->string('store', 255)->unique();
 			$table->string('access_token', 50);
 			$table->string('refresh_token', 50);
 			$table->string('publishable_key', 50);
