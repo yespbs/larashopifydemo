@@ -46,12 +46,9 @@
 		</form>
 	</div>
 	<script type="text/javascript">
-	shopify_authorize=function(){
-		store_name = jQuery('#store_name').val();
-		alert(store_name)
-		window.location.href = 'https://' + store_name + '.myshopify.com/admin/oauth/authorize?client_id={{{ Config::get("shopify.api_key") }}}&scope={{{ Config::get("shopify.scopes") }}}&redirect_uri={{{ Config::get("shopify.redirect_uri") }}}';
-
-		
-	}
+		shopify_authorize=function(){
+			store_name = jQuery('#store_name').val();
+			window.location.href = "https://" + store_name + ".myshopify.com/admin/oauth/authorize?client_id={{{ Config::get("shopify.api_key") }}}&scope={{{ implode(',', Config::get("shopify.scopes")) }}}&redirect_uri={{{ Config::get("shopify.redirect_uri") }}}";
+		}	
 	</script>
 @stop

@@ -14,9 +14,9 @@ return array(
 	|
 	*/
 	
-	'api_key'       => '1e02bf129dce9915d49d9443b54ad43f',
-	'shared_secret' => 'fa4400b7ef1743b8c270bd2a4557f024',	
+	'api_key'       => '7f54d10643aa327447448a2cb5e87ce0',
+	'secret_key'    => 'f2458af93330d87bf961244cfac3a81f',	
 	'redirect_uri'  => 'http://localhost/laravel-shopify/develop/public/stores/connect',
-	'scopes'        => 'read_orders,read_products,read_customers',
+	'scopes'        => ['read_orders','read_products','read_customers'],
 
 );

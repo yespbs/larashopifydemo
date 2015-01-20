@@ -32,14 +32,9 @@ class StoreController extends \BaseController {
 		$post = Input::get();
 		pr( $post );
 
-		/*$provider = new LaraShopifyDemo\Services\OAuth2\Shopify(array(
-		    'clientId'  =>  '1e02bf129dce9915d49d9443b54ad43f',
-		    'clientSecret'  =>  'fa4400b7ef1743b8c270bd2a4557f024',
-		    'redirectUri'   =>  'http://localhost/laravel-shopify/develop/public/stores/connect',//https://your-registered-redirect-uri/
-		    'scopes' => array('email', '...', '...'),
-		));
+		
 
-		if (!isset($_GET['code'])) {
+		/*if (!isset($_GET['code'])) {
 
 		    // If we don't have an authorization code then get one
 		    $authUrl = $provider->getAuthorizationUrl();
@@ -54,43 +49,66 @@ class StoreController extends \BaseController {
 		    unset($_SESSION['oauth2state']);
 		    exit('Invalid state');
 
-		} else {
+		} else {*/
 
-		    // Try to get an access token (using the authorization code grant)
-		    $token = $provider->getAccessToken('authorization_code', [
-		        'code' => $_GET['code']
-		    ]);
+			if( Input::has('code') && Input::has('shop') ){
 
-		    // If you are using Eventbrite you will need to add the grant_type parameter (see below)
-		    $token = $provider->getAccessToken('authorization_code', [
-		        'code' => $_GET['code'],
-		        'grant_type' => 'authorization_code'
-		    ]);
+				$code = Input::get('code');
+				$shop = Input::get('shop');
 
-		    // Optional: Now you have a token you can look up a users profile data
-		    try {
+				try{
+					$provider = new \LaraShopifyDemo\Services\OAuth2\Shopify([
+					    'clientId'     => Config::get("shopify.api_key"),
+					    'clientSecret' => Config::get("shopify.secret_key"),
+					    'redirectUri'  => Config::get("shopify.redirect_uri"),
+					    'scopes'       => Config::get("shopify.scopes"),
+					]);
 
-		        // We got an access token, let's now get the user's details
-		        $userDetails = $provider->getUserDetails($token);
+					$provider->setStore( $shop );
 
-		        // Use these details to create a new profile
-		        printf('Hello %s!', $userDetails->firstName);
+				    // Try to get an access token (using the authorization code grant)
+				    $token = $provider->getAccessToken('authorization_code', [
+				        'code' => $code
+				    ]);
 
-		    } catch (Exception $e) {
+				   /* // If you are using Eventbrite you will need to add the grant_type parameter (see below)
+				    $token = $provider->getAccessToken('authorization_code', [
+				        'code' => $code,
+				        'grant_type' => 'authorization_code'
+				    ]);*/
 
-		        // Failed to get user details
-		        exit('Oh dear...');
-		    }
+				    // Optional: Now you have a token you can look up a users profile data
+				    /*try {
+				    	// token
+				    	//print '<br>access token: ' . $token;
+				        // We got an access token, let's now get the user's details
+				        $userDetails = $provider->getUserDetails( $token );
 
-		    // Use this to interact with an API on the users behalf
-		    echo $token->accessToken;
+				        // Use these details to create a new profile
+				        println( sprintf('Hello %s!', $userDetails->firstName) );
 
-		    // Use this to get a new access token if the old one expires
-		    echo $token->refreshToken;
+				    } catch (Exception $e) {
 
-		    // Number of seconds until the access token will expire, and need refreshing
-		    echo $token->expires;
-		}*/
+				    	println( 'error1: '. $e->getMessage());
+				        // Failed to get user details
+				        //exit('Oh dear...');
+				    }*/
+
+				    // Use this to interact with an API on the users behalf
+				    println( 'accessToken: '. $token->accessToken);
+
+				    // Use this to get a new access token if the old one expires
+				    println( 'refreshToken: '. $token->refreshToken);
+
+				    // Number of seconds until the access token will expire, and need refreshing
+				    println( 'expires: ' . $token->expires);
+				}catch (Exception $e) {
+
+			    	println( 'error2: '. $e->getMessage());
+			        // Failed to get user details
+			        //exit('Oh dear...');
+			    }    
+			}
 	}
 
 	/**
@@ -103,6 +121,28 @@ class StoreController extends \BaseController {
 	{
 		$post = Input::get();
 		pr( $post );
+	}
+
+	public function anyRevoke()
+	{
+		$access_token = Config::get("shopify.secret_key");
+	    $revoke_url   = "https://someshop.myshopify.com/admin/oauth/revoke";
+
+		  $headers = array(
+		    "Content-Type: application/json",
+		    "Accept: application/json",
+		    "Content-Length: 0",
+		    "X-Shopify-Access-Token: " . $access_token
+		  );
+
+		  $handler = curl_init($revoke_url);
+		  curl_setopt($handler, CURLOPT_CUSTOMREQUEST, "DELETE");
+		  curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
+		  curl_setopt($handler, CURLOPT_HTTPHEADER, $headers);
+
+		  $response = curl_exec($handler);
+
+		  echo($response);
 	}
 
 	/**

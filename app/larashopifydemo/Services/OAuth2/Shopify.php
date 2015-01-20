@@ -9,7 +9,7 @@ class Shopify extends AbstractProvider
 	*
 	* @var string
 	*/
-	public $store = 'larashopifydemo';
+	public $store = '';
 	/**
 	* Autorize url.
 	*
@@ -17,7 +17,11 @@ class Shopify extends AbstractProvider
 	*/
 	public function urlAuthorize()
 	{
-		return sprintf('https://%s.myshopify.com/admin/oauth/authorize', $this->store);
+		$urlAuthorize = sprintf('https://%s.myshopify.com/admin/oauth/authorize', $this->store);
+
+		\Log::debug('urlAuthorize: '. $urlAuthorize, array('context'=>'urlAuthorize'));
+
+		return $urlAuthorize;
 	}
 	
 	/**
@@ -27,9 +31,18 @@ class Shopify extends AbstractProvider
 	*/
 	public function urlAccessToken()
 	{
-		return sprintf('https://%s.myshopify.com/admin/oauth/access_token', $this->store);
+		$urlAccessToken = sprintf('https://%s.myshopify.com/admin/oauth/access_token', $this->store);
+		
+		\Log::debug('urlAccessToken: '. $urlAccessToken, array('context'=>'urlAccessToken'));
+
+		return $urlAccessToken;
 	}
 
+	/**
+	 * @todo
+	 * user url not available with Shopify, will can later user api resource
+	 * @see http://docs.shopify.com/api/user
+	 */ 
 	public function urlUserDetails(\League\OAuth2\Client\Token\AccessToken $token)
 	{
 		return \URL::to('stores/user-details'); // @TODO: extract this somehow
@@ -48,5 +61,9 @@ class Shopify extends AbstractProvider
 		}
 
 		return false;
+	}
+
+	public function setStore( $store ){
+		$this->store = str_replace('.myshopify.com', '', $store);
 	}
 } 
