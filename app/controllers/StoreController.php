@@ -11,9 +11,6 @@ class StoreController extends \BaseController {
 	 */
 	public function anyIndex()
 	{
-		//
-		// echo 'index';
-
 		$data = array();
 
 		$data['stores'] = \LaraShopifyDemo\Model\Store::all();
@@ -95,7 +92,7 @@ class StoreController extends \BaseController {
 		pr( $post );
 	}
 
-	public function anyRevoke()
+	/*public function anyRevoke()
 	{
 		$access_token = '843ddbcd3442da597df883088c9c151e';//Config::get("shopify.secret_key");
 	    $revoke_url   = "https://larashopifydemo.myshopify.com/admin/oauth/revoke";
@@ -136,7 +133,7 @@ class StoreController extends \BaseController {
 
 		pr($json);
 
-		/*$endpoint_url = "https://larashopifydemo.myshopify.com/admin/webhooks.json";
+		$endpoint_url = "https://larashopifydemo.myshopify.com/admin/webhooks.json";
 
 		$response = $client->get($endpoint_url, [			
 			'headers' => ['X-Shopify-Access-Token' => $access_token]
@@ -144,9 +141,15 @@ class StoreController extends \BaseController {
 
 		$json = $response->json();
 
-		pr($json);*/
-	}
+		pr($json);
+	}*/
 
+	/**
+	 * Show the form for creating a new resource.
+	 * GET /store/create
+	 *
+	 * @return Response
+	 */	
 	public function anyWebhooks( $id )
 	{
 		//echo 'store:' .$id;
@@ -185,6 +188,12 @@ class StoreController extends \BaseController {
 		return View::make('stores.webhooks', $data);
 	}
 
+	/**
+	 * Show the form for creating a new resource.
+	 * GET /store/create
+	 *
+	 * @return Response
+	 */	
 	public function postWebhookCreate()
 	{
 		// create new product
