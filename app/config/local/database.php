@@ -23,12 +23,15 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'homestead',
-			'username'  => 'homestead',
-			'password'  => 'secret',
+			'database'  => 'larashopifydemo',
+			'username'  => 'root',
+			'password'  => 'sologic',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
+			'options'   => array(
+				\PDO::MYSQL_ATTR_INIT_COMMAND => "SET time_zone = '+00:00'"
+			)
 		),
 
 		'pgsql' => array(

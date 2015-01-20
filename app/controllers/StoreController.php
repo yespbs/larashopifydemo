@@ -11,7 +11,11 @@ class StoreController extends \BaseController {
 	public function anyIndex()
 	{
 		//
-		echo 'index';
+		// echo 'index';
+
+		$data = array();
+
+		return View::make('stores.index', $data);
 	}
 
 	/**
@@ -25,7 +29,10 @@ class StoreController extends \BaseController {
 		//
 		echo 'connect';
 
-		$provider = new LaraShopify\Services\OAuth2\Shopify(array(
+		$post = Input::get();
+		pr( $post );
+
+		/*$provider = new LaraShopifyDemo\Services\OAuth2\Shopify(array(
 		    'clientId'  =>  '1e02bf129dce9915d49d9443b54ad43f',
 		    'clientSecret'  =>  'fa4400b7ef1743b8c270bd2a4557f024',
 		    'redirectUri'   =>  'http://localhost/laravel-shopify/develop/public/stores/connect',//https://your-registered-redirect-uri/
@@ -83,7 +90,7 @@ class StoreController extends \BaseController {
 
 		    // Number of seconds until the access token will expire, and need refreshing
 		    echo $token->expires;
-		}
+		}*/
 	}
 
 	/**
