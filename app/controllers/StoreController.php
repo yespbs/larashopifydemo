@@ -1,4 +1,5 @@
 <?php
+use GuzzleHttp\Client;
 
 class StoreController extends \BaseController {
 
@@ -15,6 +16,8 @@ class StoreController extends \BaseController {
 
 		$data = array();
 
+		$data['stores'] = \LaraShopifyDemo\Model\Store::all();
+
 		return View::make('stores.index', $data);
 	}
 
@@ -26,89 +29,58 @@ class StoreController extends \BaseController {
 	 */
 	public function anyConnect()
 	{
-		//
-		echo 'connect';
-
-		$post = Input::get();
-		pr( $post );
-
 		
+		$post = Input::get();
 
-		/*if (!isset($_GET['code'])) {
+		// log
+		Log::debug( pr( $post, true ) );
 
-		    // If we don't have an authorization code then get one
-		    $authUrl = $provider->getAuthorizationUrl();
-		    $_SESSION['oauth2state'] = $provider->state;
-		    \Session::put('oauth2state', $provider->state);
-		    header('Location: '.$authUrl);
-		    exit;
+		if( Input::has('code') && Input::has('shop') ){
 
-		// Check given state against previously stored one to mitigate CSRF attack
-		} elseif (empty($_GET['state']) || ($_GET['state'] !== $_SESSION['oauth2state'])) {
+			$code = Input::get('code');
+			$shop = Input::get('shop');
 
-		    unset($_SESSION['oauth2state']);
-		    exit('Invalid state');
+			try{
+				$provider = new \LaraShopifyDemo\Services\OAuth2\Shopify([
+				    'clientId'     => Config::get("shopify.api_key"),
+				    'clientSecret' => Config::get("shopify.secret_key"),
+				    'redirectUri'  => Config::get("shopify.redirect_uri"),
+				    'scopes'       => Config::get("shopify.scopes"),
+				]);
 
-		} else {*/
+				$provider->setStore( $shop );
 
-			if( Input::has('code') && Input::has('shop') ){
+			    // Try to get an access token (using the authorization code grant)
+			    $token = $provider->getAccessToken('authorization_code', [
+			        'code' => $code
+			    ]);
 
-				$code = Input::get('code');
-				$shop = Input::get('shop');
+			    // Use this to interact with an API on the users behalf
+			    \Log::debug( 'accessToken: '. $token->accessToken);
+			   
+			    try{
 
-				try{
-					$provider = new \LaraShopifyDemo\Services\OAuth2\Shopify([
-					    'clientId'     => Config::get("shopify.api_key"),
-					    'clientSecret' => Config::get("shopify.secret_key"),
-					    'redirectUri'  => Config::get("shopify.redirect_uri"),
-					    'scopes'       => Config::get("shopify.scopes"),
-					]);
+	            	// get or empty object, does not use fillable
+		            $store = \LaraShopifyDemo\Model\Store::firstOrCreate(array('store'=>$shop, 'access_token'=>$token->accessToken));
 
-					$provider->setStore( $shop );
+		            // save
+		            $store->save();
 
-				    // Try to get an access token (using the authorization code grant)
-				    $token = $provider->getAccessToken('authorization_code', [
-				        'code' => $code
-				    ]);
+		    		// set
+					$errors = array('status'=>'success','message'=>'You have connected with Shopify successfully.');
 
-				   /* // If you are using Eventbrite you will need to add the grant_type parameter (see below)
-				    $token = $provider->getAccessToken('authorization_code', [
-				        'code' => $code,
-				        'grant_type' => 'authorization_code'
-				    ]);*/
+		            return Redirect::to('stores')->with('errors', $errors);
+		            
+		        }catch ( Exception $e ){
+		        	println($e->getMessage());
+		        }    
+			}catch (Exception $e) {
 
-				    // Optional: Now you have a token you can look up a users profile data
-				    /*try {
-				    	// token
-				    	//print '<br>access token: ' . $token;
-				        // We got an access token, let's now get the user's details
-				        $userDetails = $provider->getUserDetails( $token );
-
-				        // Use these details to create a new profile
-				        println( sprintf('Hello %s!', $userDetails->firstName) );
-
-				    } catch (Exception $e) {
-
-				    	println( 'error1: '. $e->getMessage());
-				        // Failed to get user details
-				        //exit('Oh dear...');
-				    }*/
-
-				    // Use this to interact with an API on the users behalf
-				    println( 'accessToken: '. $token->accessToken);
-
-				    // Use this to get a new access token if the old one expires
-				    println( 'refreshToken: '. $token->refreshToken);
-
-				    // Number of seconds until the access token will expire, and need refreshing
-				    println( 'expires: ' . $token->expires);
-				}catch (Exception $e) {
-
-			    	println( 'error2: '. $e->getMessage());
-			        // Failed to get user details
-			        //exit('Oh dear...');
-			    }    
-			}
+		    	println( 'error2: '. $e->getMessage());
+		        // Failed to get user details
+		        //exit('Oh dear...');
+		    }    
+		}
 	}
 
 	/**
@@ -125,8 +97,8 @@ class StoreController extends \BaseController {
 
 	public function anyRevoke()
 	{
-		$access_token = Config::get("shopify.secret_key");
-	    $revoke_url   = "https://someshop.myshopify.com/admin/oauth/revoke";
+		$access_token = '843ddbcd3442da597df883088c9c151e';//Config::get("shopify.secret_key");
+	    $revoke_url   = "https://larashopifydemo.myshopify.com/admin/oauth/revoke";
 
 		  $headers = array(
 		    "Content-Type: application/json",
@@ -143,6 +115,67 @@ class StoreController extends \BaseController {
 		  $response = curl_exec($handler);
 
 		  echo($response);
+	}
+
+	public function anyTest()
+	{
+		$access_token = '4d70c544a97c6f09011edeb45495e2e6';//Config::get("shopify.secret_key");
+		
+		$client = new Client();
+		
+		$endpoint_url = "https://larashopifydemo.myshopify.com/admin/webhooks.json";
+
+		$post = ['webhook'=>['topic'=>'orders/create','address'=>'http://sologicsolutions.com/shopify/track/orders.create','format'=>'json']];
+
+		$response = $client->post($endpoint_url, [
+			'json' => $post,
+			'headers' => ['X-Shopify-Access-Token' => $access_token]
+		]);
+
+		$json = $response->json();
+
+		pr($json);
+
+		/*$endpoint_url = "https://larashopifydemo.myshopify.com/admin/webhooks.json";
+
+		$response = $client->get($endpoint_url, [			
+			'headers' => ['X-Shopify-Access-Token' => $access_token]
+		]);
+
+		$json = $response->json();
+
+		pr($json);*/
+	}
+
+	public function anyWebhooks( $id )
+	{
+		//echo 'store:' .$id;
+
+		$data = array();
+		try{
+			$data['store'] = $store = \LaraShopifyDemo\Model\Store::findOrFail($id);
+
+			$client = new Client();
+
+			$endpoint_url = "https://larashopifydemo.myshopify.com/admin/webhooks.json";
+
+			$response = $client->get($endpoint_url, [			
+			'headers' => ['X-Shopify-Access-Token' => $store->access_token]
+			]);
+
+			$json = $response->json();
+
+			pr($json);
+		}catch (Exception $e){
+			\Log::error($e->getMessage());
+
+			// set
+			$errors = array('status'=>'error','message'=>'No such store.');
+
+            return Redirect::to('stores')->with('errors', $errors);
+		}
+
+		return View::make('stores.webhooks', $data);
 	}
 
 	/**

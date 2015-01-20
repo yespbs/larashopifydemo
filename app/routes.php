@@ -11,10 +11,19 @@
 |
 */
 
-Route::get('/', function()
+/*Route::get('/', function()
 {
 	return View::make('hello');
-});
+});*/
+
+
+Route::match(array('get','post'), 'stores/{id}/webhooks', [ 'uses' => 'StoreController@anyWebhooks', 'as' => 'store.webhooks' ]); 
 
 Route::controller('stores'     , 'StoreController');
 Route::controller('webhooks'   , 'WebhookController');
+
+
+/**
+ * Default 
+ */
+ Route::get('/', 'StoreController@getIndex');

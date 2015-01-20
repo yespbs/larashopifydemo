@@ -19,7 +19,7 @@ class Shopify extends AbstractProvider
 	{
 		$urlAuthorize = sprintf('https://%s.myshopify.com/admin/oauth/authorize', $this->store);
 
-		\Log::debug('urlAuthorize: '. $urlAuthorize, array('context'=>'urlAuthorize'));
+		//\Log::debug('urlAuthorize: '. $urlAuthorize, array('context'=>'urlAuthorize'));
 
 		return $urlAuthorize;
 	}
@@ -33,7 +33,7 @@ class Shopify extends AbstractProvider
 	{
 		$urlAccessToken = sprintf('https://%s.myshopify.com/admin/oauth/access_token', $this->store);
 		
-		\Log::debug('urlAccessToken: '. $urlAccessToken, array('context'=>'urlAccessToken'));
+		//\Log::debug('urlAccessToken: '. $urlAccessToken, array('context'=>'urlAccessToken'));
 
 		return $urlAccessToken;
 	}

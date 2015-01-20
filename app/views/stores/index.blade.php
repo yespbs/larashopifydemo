@@ -12,24 +12,19 @@
 	  			</tr>
 	  		</thead>
 	  		<tbody>
-	  			<tr>
-	  				<td></td>
-	  				<td></td>
-	  				<td></td>
-	  			</tr>
-
-	  			<tr>
-	  				<td></td>
-	  				<td></td>
-	  				<td></td>
-	  			</tr>
-
-	  			<tr>
-	  				<td></td>
-	  				<td></td>
-	  				<td></td>
-	  			</tr>
-
+	  			@if( $stores->count() == 0 )
+	  				<tr>
+		  				<td colspan="4">no store</td>		  				
+		  			</tr>
+	  			@else
+	  				@foreach($stores as $store)
+	  					<tr>
+			  				<td>{{{ $store->id }}}</td>
+			  				<td>{{{ $store->store }}}</td>
+			  				<td>{{ HTML::link(sprintf('stores/%d/webhooks', $store->id), 'Webhooks' ) }}</td>
+			  			</tr>
+	  				@endforeach
+	  			@endif
 	  		</tbody>
 		</table>
 	

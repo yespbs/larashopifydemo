@@ -34,7 +34,7 @@ class Store extends \Eloquent {
 	 * 
 	 * @var array
 	 */ 
-	protected $fillable = ['store'];
+	protected $fillable = ['store','access_token'];
 
 	/**
 	 * Get the unique identifier for the user.
