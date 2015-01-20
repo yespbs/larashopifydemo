@@ -7,7 +7,7 @@
 	"require": {
 		"laravel/framework": "4.2.*",
 		"league/oauth2-client": "0.7.*",
-		"way/generators": "~3.0"
+		"way/generators": "2.*"
 	},
 	"autoload": {
 		"classmap": [
