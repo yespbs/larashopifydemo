@@ -5,7 +5,7 @@ A demo application with Laravel to interact with Shopify oAuth API and create We
 ### Install
 	
 	1. Download the source "yespbs/larashopifydemo"
-	2. Install composer `update composer`
+	2. CD into your-project-install and update composer `update composer`
 	3. Update database details in app/config/database or app/config/local/database as per your environment
 	4. Run database migrate `php aritisan migrate`
 	5. Update app/config/shopify.php to match your install and keys from Shopify App
