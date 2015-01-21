@@ -20,10 +20,9 @@
 Route::match(array('get','post'), 'stores/{id}/webhooks', [ 'uses' => 'StoreController@anyWebhooks', 'as' => 'store.webhooks' ]); 
 
 Route::controller('stores'     , 'StoreController');
-Route::controller('webhooks'   , 'WebhookController');
-
+//Route::controller('webhooks'   , 'WebhookController');
 
 /**
  * Default 
  */
- Route::get('/', 'StoreController@getIndex');
+ Route::get('/', 'StoreController@anyIndex');
